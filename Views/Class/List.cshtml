@@ -1,0 +1,38 @@
+﻿﻿@model IEnumerable<Cumulative1.Models.Class>
+@{
+    ViewBag.Title = "List";
+}
+
+<div id="containerlist">
+    <h2>List of Classes</h2>
+
+    <!-- Search Form -->
+    <form action="/Class/List" method="GET">
+        <label for="SearchKey">Search:</label>
+        <input type="text" name="SearchKey" id="SearchKey" autocomplete="off" />
+        <input type="submit" value="Search" />
+    </form>
+
+    <!-- Class Table -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Class Code</th>
+                <th>Class Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var _class in Model)
+            {
+                <tr>
+                    <td>@_class.ClassId</td>
+                    <td>@_class.ClassCode</td>
+                    <td>@_class.ClassName</td>
+                    <td><a href="/Class/Show/@_class.ClassId">Show Details</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

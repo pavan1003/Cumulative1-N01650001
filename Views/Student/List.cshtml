@@ -1,0 +1,35 @@
+﻿﻿@model IEnumerable<Cumulative1.Models.Student>
+@{
+    ViewBag.Title = "List";
+}
+
+<div id="containerlist">
+    <h2>List of Students</h2>
+
+    <!-- Search Form -->
+    <label for="HireDateStart">Hire Date Range:</label>
+    <input type="date" name="HireDateStart" id="HireDateStart" />
+    <span>to</span>
+    <input type="date" name="HireDateEnd" id="HireDateEnd" />
+
+    <!-- Student Table -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var teacher in Model)
+            {
+                <tr>
+                    <td>@teacher.StudentId</td>
+                    <td>@teacher.StudentFname @teacher.StudentLname</td>
+                    <td><a href="/Student/Show/@teacher.StudentId">Show Details</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

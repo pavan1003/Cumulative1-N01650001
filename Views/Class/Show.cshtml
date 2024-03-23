@@ -1,0 +1,36 @@
+﻿﻿@model Cumulative1.Models.Class
+@{
+    ViewBag.Title = "Show";
+}
+
+<a class="navlink" href="/Class/List">Back To Classes</a>
+
+<div id="containershow">
+    <h2>Class Information</h2>
+    <table class="table">
+        <tr>
+            <th>Class ID</th>
+            <td>@Model.ClassId</td>
+        </tr>
+        <tr>
+            <th>Class Code</th>
+            <td>@Model.ClassCode</td>
+        </tr>
+        <tr>
+            <th>Class Name</th>
+            <td>@Model.ClassName</td>
+        </tr>
+        <tr>
+            <th>Start Date</th>
+            <td>@Model.StartDate.ToString("dd-MM-yyyy")</td>
+        </tr>
+        <tr>
+            <th>Finish Date</th>
+            <td>@Model.FinishDate.ToString("dd-MM-yyyy")</td>
+        </tr>
+        <tr>
+            <th>Teacher ID</th>
+            <td><a href="/Teacher/Show/@Model.TeacherId">@Model.TeacherId</a></td>
+        </tr>
+    </table>
+</div>
