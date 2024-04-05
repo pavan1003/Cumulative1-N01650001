@@ -3,23 +3,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
 using Cumulative1.Models;
 using System.Diagnostics;
+using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace Cumulative1.Controllers
 {
-    public class TeacherDataController : Controller
+    public class TeacherDataController : ApiController
     {
         private SchoolDbContext School = new SchoolDbContext();
 
         /// <summary>
         /// Returns a list of teachers in the system filtered by an optional search key.
         /// </summary>
-        /// <param name="SearchKey">Optional search key to filter teachers by first name, last name, full name, hiredate or salary.</param>
-        /// <returns>A list of teacher objects.</returns>
+        /// <param name="SearchKey">Optional search key to filter teachers by first name, last name, full name, hire date, or salary.</param>
+        /// <returns>
+        /// A list of teacher objects.
+        /// Each teacher object contains the following properties:
+        /// - TeacherId (int): The unique identifier of the teacher.
+        /// - TeacherFname (string): The first name of the teacher.
+        /// - TeacherLname (string): The last name of the teacher.
+        /// - EmployeeNumber (string): The employee number of the teacher.
+        /// - HireDate (DateTime): The date when the teacher was hired.
+        /// - Salary (decimal): The salary of the teacher.
+        /// </returns>
+        /// /// <example>
+        /// Example of GET request:
+        /// GET api/TeacherData/ListTeachers?SearchKey=Pavan
+        /// GET api/TeacherData/ListTeachers?SearchKey=04-05
+        /// GET api/TeacherData/ListTeachers?SearchKey=66
+        /// </example>
         [HttpGet]
-        [Route("api/TeacherData/ListTeachers/{SearchKey?}/{HireDateStartSearchKey?}/{HireDateEndSearchKey?}/{SalarySearchKey?}")]
+        [Route("api/TeacherData/ListTeachers/{SearchKey?}")]
         public IEnumerable<Teacher> ListTeachers(string SearchKey = null)
         {
             // Create a connection to the database
@@ -30,12 +46,6 @@ namespace Cumulative1.Controllers
             MySqlCommand cmd = Conn.CreateCommand();
             cmd.CommandText = "SELECT * FROM Teachers WHERE LOWER(teacherfname) LIKE LOWER(@Key) OR LOWER(teacherlname) LIKE LOWER(@Key) OR LOWER(CONCAT(teacherfname, ' ', teacherlname)) LIKE LOWER(@Key) or hiredate Like @Key or DATE_FORMAT(hiredate, '%d-%m-%Y') Like @Key or salary LIKE @Key ";
             cmd.Parameters.AddWithValue("@Key", "%" + SearchKey + "%");
-
-            foreach (MySqlParameter parameter in cmd.Parameters)
-            {
-                Trace.WriteLine("Parameter Name: " + parameter.ParameterName);
-                Trace.WriteLine("Parameter Value: " + parameter.Value);
-            }
 
             cmd.Prepare();
 
@@ -82,7 +92,21 @@ namespace Cumulative1.Controllers
         /// Finds a teacher in the system given an ID and retrieves associated classes.
         /// </summary>
         /// <param name="id">The teacher's primary key.</param>
-        /// <returns>A teacher object with associated classes.</returns>
+        /// <returns>
+        /// A teacher object with associated classes.
+        /// The teacher object contains the following properties:
+        /// - TeacherId (int): The unique identifier of the teacher.
+        /// - TeacherFname (string): The first name of the teacher.
+        /// - TeacherLname (string): The last name of the teacher.
+        /// - EmployeeNumber (string): The employee number of the teacher.
+        /// - HireDate (DateTime): The date when the teacher was hired.
+        /// - Salary (decimal): The salary of the teacher.
+        /// - Classes (List<Class>): A list of class objects associated with the teacher.
+        /// </returns>
+        /// /// <example>
+        /// Example of GET request:
+        /// GET api/TeacherData/FindTeacher/12
+        /// </example>
         [HttpGet]
         [Route("api/TeacherData/FindTeacher/{id}")]
         public Teacher FindTeacher(int id)
@@ -156,6 +180,88 @@ namespace Cumulative1.Controllers
 
             // Return the teacher object
             return NewTeacher;
+        }
+
+        /// <summary>
+        /// Adds a teacher to the MySQL Database. Non-Deterministic.
+        /// </summary>
+        /// <param name="NewTeacher">An object with fields that map to the columns of the teacher's table.</param>
+        /// <example>
+        /// POST api/TeacherData/AddTeacher 
+        /// FORM DATA / POST DATA / REQUEST BODY 
+        /// {
+        ///	"TeacherFname":"Pavan",
+        ///	"TeacherLname":"Mistry",
+        ///	"EmployeeNumber":"T123",
+        ///	"HireDate":"05-04-2024"
+        ///	"Salary": 66
+        /// }
+        /// </example>
+        [HttpPost]
+        [EnableCors(origins: "*", methods: "*", headers: "*")]
+        public void AddTeacher([FromBody] Teacher NewTeacher)
+        {
+
+            // If all required fields are provided, proceed with adding the teacher to the database
+
+            //Create an instance of a connection
+            MySqlConnection Conn = School.AccessDatabase();
+
+            //Open the connection between the web server and database
+            Conn.Open();
+
+            //Establish a new command (query) for our database
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            //SQL QUERY
+            cmd.CommandText = "insert into teachers (teacherfname, teacherlname, employeenumber, hiredate, salary) values (@TeacherFname,@TeacherLname,@Employeenumber, @HireDate, @Salary)";
+            cmd.Parameters.AddWithValue("@TeacherFname", NewTeacher.TeacherFname);
+            cmd.Parameters.AddWithValue("@TeacherLname", NewTeacher.TeacherLname);
+            cmd.Parameters.AddWithValue("@EmployeeNumber", NewTeacher.EmployeeNumber);
+            cmd.Parameters.AddWithValue("@HireDate", NewTeacher.HireDate);
+            cmd.Parameters.AddWithValue("@Salary", NewTeacher.Salary);
+
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+        }
+
+        /// <summary>
+        /// Deletes a teacher from the connected MySQL Database if the ID of that teacher exists. It Also maintains relational integrity.
+        /// </summary>
+        /// <param name="id">The ID of the teacher.</param>
+        /// <example>POST /api/TeacherData/DeleteTeacher/3</example>
+        [HttpPost]
+        [EnableCors(origins: "*", methods: "*", headers: "*")]
+        public void DeleteTeacher(int id)
+        {
+            //Create an instance of a connection
+            MySqlConnection Conn = School.AccessDatabase();
+
+            //Open the connection between the web server and database
+            Conn.Open();
+
+            //Establish a new command (query) for our database
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            // SQL QUERY
+            // Delete from classes table where teacherid = @id
+            cmd.CommandText = "DELETE FROM classes WHERE teacherid = @id";
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.ExecuteNonQuery();
+
+            // Delete from teachers table where teacherid = @id
+            cmd.CommandText = "DELETE FROM teachers WHERE teacherid = @id";
+            cmd.ExecuteNonQuery();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+
         }
 
     }

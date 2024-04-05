@@ -2,11 +2,11 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
+using System.Web.Http;
 
 namespace Cumulative1.Controllers
 {
-    public class ClassDataController : Controller
+    public class ClassDataController : ApiController
     {
         // Database context class for accessing the MySQL Database.
         private SchoolDbContext School = new SchoolDbContext();
@@ -15,7 +15,17 @@ namespace Cumulative1.Controllers
         /// Returns a list of classes from the system filtered by an optional search key.
         /// </summary>
         /// <param name="SearchKey">Optional search key to filter classes by class name or class code.</param>
-        /// <returns>A list of class objects.</returns>
+        /// <returns>A list of class objects. Each class object has the following properties:
+        /// - ClassId: An integer representing the unique identifier of the class.
+        /// - ClassCode: A string representing the code of the class.
+        /// - TeacherId: An integer representing the ID of the teacher associated with the class.
+        /// - StartDate: A DateTime object representing the start date of the class.
+        /// - FinishDate: A DateTime object representing the finish date of the class.
+        /// - ClassName: A string representing the name of the class.</returns>
+        /// <example>
+        /// Example of GET request:
+        /// GET /api/ClassData/ListClasses?SearchKey=Math
+        /// </example>
         [HttpGet]
         [Route("api/ClassData/ListClasses/{SearchKey?}")]
         public IEnumerable<Class> ListClasses(string SearchKey = null)
@@ -73,7 +83,17 @@ namespace Cumulative1.Controllers
         /// Returns an individual class from the database by specifying the primary key classid.
         /// </summary>
         /// <param name="id">The class's ID in the database.</param>
-        /// <returns>A class object.</returns>
+        /// <returns>A class object. The class object has the following properties:
+        /// - ClassId: An integer representing the unique identifier of the class.
+        /// - ClassCode: A string representing the code of the class.
+        /// - TeacherId: An integer representing the ID of the teacher associated with the class.
+        /// - StartDate: A DateTime object representing the start date of the class.
+        /// - FinishDate: A DateTime object representing the finish date of the class.
+        /// - ClassName: A string representing the name of the class.</returns>
+        /// <example>
+        /// Example of GET request:
+        /// GET /api/ClassData/FindClass/12
+        /// </example>
         [HttpGet]
         [Route("api/ClassData/FindClass/{id}")]
         public Class FindClass(int id)

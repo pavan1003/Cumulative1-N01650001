@@ -7,10 +7,11 @@
     <h2>List of Students</h2>
 
     <!-- Search Form -->
-    <label for="HireDateStart">Hire Date Range:</label>
-    <input type="date" name="HireDateStart" id="HireDateStart" />
-    <span>to</span>
-    <input type="date" name="HireDateEnd" id="HireDateEnd" />
+    <form action="/Student/List" method="GET">
+        <label for="SearchKey">Search:</label>
+        <input type="text" name="SearchKey" id="SearchKey" autocomplete="off" />
+        <input type="submit" value="Search" />
+    </form>
 
     <!-- Student Table -->
     <table class="table">

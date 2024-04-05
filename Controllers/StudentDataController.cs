@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
 using Cumulative1.Models;
+using System.Web.Http;
 
 namespace Cumulative1.Controllers
 {
-    public class StudentDataController : Controller
+    public class StudentDataController : ApiController
     {
         // Database context class for accessing the MySQL Database.
         private SchoolDbContext School = new SchoolDbContext();
@@ -17,7 +17,16 @@ namespace Cumulative1.Controllers
         /// Returns a list of students from the system filtered by an optional search key.
         /// </summary>
         /// <param name="SearchKey">Optional search key to filter students by first name, last name, or full name.</param>
-        /// <returns>A list of student objects.</returns>
+        /// <returns>A list of student objects. Each student object has the following properties:
+        /// - StudentId: An integer representing the unique identifier of the student.
+        /// - StudentFname: A string representing the first name of the student.
+        /// - StudentLname: A string representing the last name of the student.
+        /// - StudentNumber: A string representing the student number.
+        /// - EnrolDate: A DateTime object representing the enrollment date of the student.</returns>
+        /// <example>
+        /// Example of GET request:
+        /// GET /api/StudentData/ListStudents?SearchKey=Pavan
+        /// </example>
         [HttpGet]
         [Route("api/StudentData/ListStudents/{SearchKey?}")]
         public IEnumerable<Student> ListStudents(string SearchKey = null)
@@ -73,7 +82,16 @@ namespace Cumulative1.Controllers
         /// Returns an individual student from the database by specifying the primary key studentid.
         /// </summary>
         /// <param name="id">The student's ID in the database.</param>
-        /// <returns>A student object.</returns>
+        /// <returns>A student object. The student object has the following properties:
+        /// - StudentId: An integer representing the unique identifier of the student.
+        /// - StudentFname: A string representing the first name of the student.
+        /// - StudentLname: A string representing the last name of the student.
+        /// - StudentNumber: A string representing the student number.
+        /// - EnrolDate: A DateTime object representing the enrollment date of the student.</returns>
+        /// <example>
+        /// Example of GET request:
+        /// GET /api/StudentData/FindStudent/12
+        /// </example>
         [HttpGet]
         [Route("api/StudentData/FindStudent/{id}")]
         public Student FindStudent(int id)

@@ -3,46 +3,42 @@
     ViewBag.Title = "Show";
 }
 
-<a class="navlink" href="/Teacher/List">Back To Teachers</a>
-
-<div id="containershow">
+<div id="containershow" class="container">
+    <nav class="my-3">
+        <a class="navlink" href="/Teacher/List">Back To Teachers</a>
+    </nav>
     <h2>Teacher Information</h2>
-    <table class="table">
-        <tr>
-            <th>ID</th>
-            <td>@Model.TeacherId</td>
-        </tr>
-        <tr>
-            <th>Full Name</th>
-            <td>@Model.TeacherFname @Model.TeacherLname</td>
-        </tr>
-        <tr>
-            <th>Employee Number</th>
-            <td>@Model.EmployeeNumber</td>
-        </tr>
-        <tr>
-            <th>Hire Date</th>
-            <td>@Model.HireDate</td>
-        </tr>
-        <tr>
-            <th>Salary</th>
-            <td>@Model.Salary</td>
-        </tr>
-        <tr>
-            <th>Classes</th>
-            <td>
-                @if (Model.Classes != null && Model.Classes.Any())
-                {
-                    foreach (var _class in Model.Classes)
-                    {
-                        <div><a href="/Class/Show/@_class.ClassId">@_class.ClassCode</a> : @_class.ClassName</div>
-                        }
-                        }
-                        else
-                        {
-                        <div>No classes assigned</div>
-                        }
-                    </td>
-                </tr>
-            </table>
-        </div>
+
+    <div class="mb-3">
+        <strong>ID:</strong> @Model.TeacherId
+    </div>
+    <div class="mb-3">
+        <strong>Employee Number:</strong> @Model.EmployeeNumber
+    </div>
+    <div class="mb-3">
+        <strong>Salary:</strong> @Model.Salary
+    </div>
+
+    <div class="mb-3">
+        <strong>Full Name:</strong> @Model.TeacherFname @Model.TeacherLname
+    </div>
+    <div class="mb-3">
+        <strong>Hire Date:</strong> @Model.HireDate
+    </div>
+    <div class="mb-3">
+        <strong>Classes:</strong>
+        @if (Model.Classes != null && Model.Classes.Any())
+        {
+            foreach (var _class in Model.Classes)
+            {
+                <div><a href="/Class/Show/@_class.ClassId">@_class.ClassCode</a> : @_class.ClassName</div>
+            }
+        }
+        else
+        {
+            <div>No classes assigned</div>
+        }
+    </div>
+
+    <a class="mt-3 btn btn-danger" href="/Teacher/DeleteConfirm/@Model.TeacherId">Delete Teacher</a>
+</div>
