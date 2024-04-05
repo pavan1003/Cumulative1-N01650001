@@ -58,7 +58,7 @@ function highlightField(field) {
 
 function sendTeacherData(data) {
     // AJAX request to send teacher data to server
-    var URL = "/Teacher/Create";
+    var URL = "/Teacher/Ajax_Create";
     var rq = new XMLHttpRequest();
 
     var responseText = document.getElementById("ResponseText");
@@ -101,7 +101,6 @@ function DeleteTeacher(TeacherId) {
             } else {
                 // Other error responses
                 responseText.innerHTML = "Error: Failed to Delete teacher. Status: " + rq.status
-                console.log(rq.responseText)
             }
         }
     };

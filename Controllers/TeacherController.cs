@@ -51,7 +51,6 @@ namespace Cumulative1.Controllers
 
             return View(NewTeacher);
         }
-
         /// <summary>
         /// Displays a form to add a new teacher.
         /// </summary>
@@ -60,6 +59,18 @@ namespace Cumulative1.Controllers
         /// GET : /Teacher/New
         /// </example>
         public ActionResult New()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Displays a form to add a new teacher.
+        /// </summary>
+        /// <returns>The view displaying a form to add a new teacher using AJAX request.</returns>
+        /// <example>
+        /// GET : /Teacher/Ajax_New
+        /// </example>
+        public ActionResult Ajax_New()
         {
             return View();
         }
@@ -81,11 +92,11 @@ namespace Cumulative1.Controllers
         /// Example of POST request body
         /// POST /Teacher/Create
         /// {
-        ///     "TeacherFname": "John",
-        ///     "TeacherLname": "Doe",
-        ///     "EmployeeNumber": "E12345",
-        ///     "HireDate": "2024-04-06T00:00:00",
-        ///     "Salary": 50000
+        ///     "TeacherFname": "Pavan",
+        ///     "TeacherLname": "Mistry",
+        ///     "EmployeeNumber": "T123",
+        ///     "HireDate": "2024-04-06",
+        ///     "Salary": 50
         /// }
         /// </example>
         [HttpPost]
@@ -95,9 +106,56 @@ namespace Cumulative1.Controllers
             if (string.IsNullOrEmpty(TeacherFname) || string.IsNullOrEmpty(TeacherLname) ||
                 string.IsNullOrEmpty(EmployeeNumber) || HireDate == null || HireDate > DateTime.Now || Salary == null || Salary < 0)
             {
+                // Return the view with an error message
+                ViewBag.Message = "Missing or incorrect information when adding a teacher";
+                return View("New");
+            }
+            Teacher NewTeacher = new Teacher();
+            NewTeacher.TeacherFname = TeacherFname;
+            NewTeacher.TeacherLname = TeacherLname;
+            NewTeacher.EmployeeNumber = EmployeeNumber;
+            NewTeacher.HireDate = HireDate;
+            NewTeacher.Salary = Salary ?? 0;
+
+            TeacherDataController controller = new TeacherDataController();
+            controller.AddTeacher(NewTeacher);
+
+            // Return the view to list page
+            return RedirectToAction("List");
+        }
+
+        /// <summary>
+        /// Creates a new teacher with the provided information using AJAX.
+        /// </summary>
+        /// <param name="TeacherFname">The first name of the teacher.</param>
+        /// <param name="TeacherLname">The last name of the teacher.</param>
+        /// <param name="EmployeeNumber">The employee number of the teacher.</param>
+        /// <param name="HireDate">The hire date of the teacher.</param>
+        /// <param name="Salary">The salary of the teacher.</param>
+        /// <returns>
+        /// A response indicating the success or failure of the operation.
+        /// Returns a 200 OK response if the teacher is added successfully.
+        /// Returns a 400 Bad Request response if the provided information is missing or incorrect.
+        /// </returns>
+        /// /// <example>
+        /// Example of POST request body
+        /// POST /Teacher/Ajax_Create
+        /// {
+        ///     "TeacherFname": "Pavan",
+        ///     "TeacherLname": "Mistry",
+        ///     "EmployeeNumber": "T123",
+        ///     "HireDate": "2024-04-06",
+        ///     "Salary": 50
+        /// }
+        /// </example>
+        [HttpPost]
+        public ActionResult Ajax_Create(string TeacherFname, string TeacherLname, string EmployeeNumber, DateTime HireDate, decimal? Salary)
+        {
+            // Check for missing information
+            if (string.IsNullOrEmpty(TeacherFname) || string.IsNullOrEmpty(TeacherLname) ||
+                string.IsNullOrEmpty(EmployeeNumber) || HireDate == null || HireDate > DateTime.Now || Salary == null || Salary < 0)
+            {
                 // Return a 400 Bad Request response with an error message
-                Debug.WriteLine("Missing or incorrect information when adding a teacher");
-                Trace.WriteLine("Missing or incorrect information when adding a teacher");
                 Response.StatusCode = 400;
                 return Content("Missing or incorrect information when adding a teacher", "text/plain");
             }
@@ -128,8 +186,21 @@ namespace Cumulative1.Controllers
         {
             TeacherDataController controller = new TeacherDataController();
             Teacher NewTeacher = controller.FindTeacher(id);
+            return View(NewTeacher);
+        }
 
-
+        /// <summary>
+        /// Displays a confirmation page to delete a specific teacher using AJAX.
+        /// </summary>
+        /// <param name="id">The ID of the teacher to delete.</param>
+        /// <returns>The view displaying a confirmation page to delete the teacher using AJAX request.</returns>
+        /// <example>
+        /// GET : /Teacher/Ajax_DeleteConfirm/{id}
+        /// </example>
+        public ActionResult Ajax_DeleteConfirm(int id)
+        {
+            TeacherDataController controller = new TeacherDataController();
+            Teacher NewTeacher = controller.FindTeacher(id);
             return View(NewTeacher);
         }
 

@@ -298,6 +298,8 @@
     <Content Include="Views\Student\Show.cshtml" />
     <Content Include="Views\Class\List.cshtml" />
     <Content Include="Views\Class\Show.cshtml" />
+    <Content Include="Views\Teacher\Ajax_New.cshtml" />
+    <Content Include="Views\Teacher\Ajax_DeleteConfirm.cshtml" />
     <Content Include="Views\Teacher\New.cshtml" />
     <Content Include="Views\Teacher\DeleteConfirm.cshtml" />
   </ItemGroup>

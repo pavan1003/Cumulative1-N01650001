@@ -28,7 +28,7 @@ namespace Cumulative1.Controllers
         /// - HireDate (DateTime): The date when the teacher was hired.
         /// - Salary (decimal): The salary of the teacher.
         /// </returns>
-        /// /// <example>
+        /// <example>
         /// Example of GET request:
         /// GET api/TeacherData/ListTeachers?SearchKey=Pavan
         /// GET api/TeacherData/ListTeachers?SearchKey=04-05
@@ -103,7 +103,7 @@ namespace Cumulative1.Controllers
         /// - Salary (decimal): The salary of the teacher.
         /// - Classes (List<Class>): A list of class objects associated with the teacher.
         /// </returns>
-        /// /// <example>
+        /// <example>
         /// Example of GET request:
         /// GET api/TeacherData/FindTeacher/12
         /// </example>
