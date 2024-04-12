@@ -6,6 +6,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Cumulative1.Models;
+using Mysqlx.Datatypes;
 
 namespace Cumulative1.Controllers
 {
@@ -125,56 +126,6 @@ namespace Cumulative1.Controllers
         }
 
         /// <summary>
-        /// Creates a new teacher with the provided information using AJAX.
-        /// </summary>
-        /// <param name="TeacherFname">The first name of the teacher.</param>
-        /// <param name="TeacherLname">The last name of the teacher.</param>
-        /// <param name="EmployeeNumber">The employee number of the teacher.</param>
-        /// <param name="HireDate">The hire date of the teacher.</param>
-        /// <param name="Salary">The salary of the teacher.</param>
-        /// <returns>
-        /// A response indicating the success or failure of the operation.
-        /// Returns a 200 OK response if the teacher is added successfully.
-        /// Returns a 400 Bad Request response if the provided information is missing or incorrect.
-        /// </returns>
-        /// /// <example>
-        /// Example of POST request body
-        /// POST /Teacher/Ajax_Create
-        /// {
-        ///     "TeacherFname": "Pavan",
-        ///     "TeacherLname": "Mistry",
-        ///     "EmployeeNumber": "T123",
-        ///     "HireDate": "2024-04-06",
-        ///     "Salary": 50
-        /// }
-        /// </example>
-        [HttpPost]
-        public ActionResult Ajax_Create(string TeacherFname, string TeacherLname, string EmployeeNumber, DateTime HireDate, decimal? Salary)
-        {
-            // Check for missing information
-            if (string.IsNullOrEmpty(TeacherFname) || string.IsNullOrEmpty(TeacherLname) ||
-                string.IsNullOrEmpty(EmployeeNumber) || HireDate == null || HireDate > DateTime.Now || Salary == null || Salary < 0)
-            {
-                // Return a 400 Bad Request response with an error message
-                Response.StatusCode = 400;
-                return Content("Missing or incorrect information when adding a teacher", "text/plain");
-            }
-            Teacher NewTeacher = new Teacher();
-            NewTeacher.TeacherFname = TeacherFname;
-            NewTeacher.TeacherLname = TeacherLname;
-            NewTeacher.EmployeeNumber = EmployeeNumber;
-            NewTeacher.HireDate = HireDate;
-            NewTeacher.Salary = Salary ?? 0;
-
-            TeacherDataController controller = new TeacherDataController();
-            controller.AddTeacher(NewTeacher);
-
-            // Return a 200 OK response with a success message
-            Response.StatusCode = 200;
-            return Content("Teacher added successfully", "text/plain");
-        }
-
-        /// <summary>
         /// Displays a confirmation page to delete a specific teacher.
         /// </summary>
         /// <param name="id">The ID of the teacher to delete.</param>
@@ -221,6 +172,64 @@ namespace Cumulative1.Controllers
 
             // Return a 200 OK response
             return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+        /// <summary>
+        /// Routes to a dynamically generated "Teacher Update" Page. Gathers information from the database.
+        /// </summary>
+        /// <param name="id">Id of the Teacher</param>
+        /// <returns>A dynamic "Update Teacher" webpage which provides the current information of the teacher and asks the user for new information as part of a form.</returns>
+        /// <example>
+        /// Example of GET request:
+        /// GET /Teacher/Update/123
+        /// </example>
+        public ActionResult Update(int id)
+        {
+            TeacherDataController controller = new TeacherDataController();
+            Teacher SelectedTeacher = controller.FindTeacher(id);
+
+            return View(SelectedTeacher);
+        }
+
+        /// <summary>
+        /// Routes to a dynamically generated "Teacher Update" Page. Gathers information from the database.
+        /// </summary>
+        /// <param name="id">Id of the Teacher</param>
+        /// <returns>A dynamic "Update Teacher" webpage which provides the current information of the teacher and asks the user for new information as part of a Ajax request.</returns>
+        /// <example>
+        /// Example of GET request:
+        /// GET /Teacher/Ajax_Update/123
+        /// </example>
+        public ActionResult Ajax_Update(int id)
+        {
+            TeacherDataController controller = new TeacherDataController();
+            Teacher SelectedTeacher = controller.FindTeacher(id);
+
+            return View(SelectedTeacher);
+        }
+
+        [HttpPost]
+        public ActionResult Update(int id, string TeacherFname, string TeacherLname, string EmployeeNumber, DateTime HireDate, decimal? Salary)
+        {
+            TeacherDataController controller = new TeacherDataController();
+            if (string.IsNullOrEmpty(TeacherFname) || string.IsNullOrEmpty(TeacherLname) ||
+    string.IsNullOrEmpty(EmployeeNumber) || HireDate == null || HireDate > DateTime.Now || Salary == null || Salary < 0)
+            {
+                // Return the view with an error message
+                ViewBag.Message = "Missing or incorrect information when updating a teacher";
+                Teacher SelectedTeacher = controller.FindTeacher(id);
+                return View("Update", SelectedTeacher);
+            }
+            Teacher TeacherInfo = new Teacher();
+            TeacherInfo.TeacherFname = TeacherFname;
+            TeacherInfo.TeacherLname = TeacherLname;
+            TeacherInfo.EmployeeNumber = EmployeeNumber;
+            TeacherInfo.HireDate = HireDate;
+            TeacherInfo.Salary = Salary ?? 0;
+
+            controller.UpdateTeacher(id, TeacherInfo);
+
+            return RedirectToAction("Show/" + id);
         }
     }
 }
