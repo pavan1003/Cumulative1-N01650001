@@ -89,7 +89,7 @@ namespace Cumulative1.Controllers
         /// Returns a 200 OK response if the teacher is added successfully.
         /// Returns a 400 Bad Request response if the provided information is missing or incorrect.
         /// </returns>
-        /// /// <example>
+        /// <example>
         /// Example of POST request body
         /// POST /Teacher/Create
         /// {
@@ -208,6 +208,31 @@ namespace Cumulative1.Controllers
             return View(SelectedTeacher);
         }
 
+        /// <summary>
+        /// Updates the information of a specific teacher in the system.
+        /// </summary>
+        /// <param name="id">The ID of the teacher to update.</param>
+        /// <param name="TeacherFname">The updated first name of the teacher.</param>
+        /// <param name="TeacherLname">The updated last name of the teacher.</param>
+        /// <param name="EmployeeNumber">The updated employee number of the teacher.</param>
+        /// <param name="HireDate">The updated hire date of the teacher.</param>
+        /// <param name="Salary">The updated salary of the teacher.</param>
+        /// <returns>
+        /// A response indicating the success or failure of the operation.
+        /// Returns a redirect to the details page of the updated teacher if successful.
+        /// Returns the "Update Teacher" view with an error message if the provided information is missing or incorrect.
+        /// </returns>
+        /// <example>
+        /// Example of POST request body:
+        /// POST /Teacher/Update/{id}
+        /// {
+        ///     "TeacherFname": "UpdatedFirstName",
+        ///     "TeacherLname": "UpdatedLastName",
+        ///     "EmployeeNumber": "UpdatedEmployeeNumber",
+        ///     "HireDate": "2024-04-15",
+        ///     "Salary": 100
+        /// }
+        /// </example>
         [HttpPost]
         public ActionResult Update(int id, string TeacherFname, string TeacherLname, string EmployeeNumber, DateTime HireDate, decimal? Salary)
         {

@@ -187,6 +187,11 @@ namespace Cumulative1.Controllers
         /// Adds a teacher to the MySQL Database. Non-Deterministic.
         /// </summary>
         /// <param name="NewTeacher">An object with fields that map to the columns of the teacher's table.</param>
+        /// <returns>
+        /// A response indicating the success or failure of the operation.
+        /// Returns a 400 Bad Request response if the provided information is missing or incorrect.
+        /// Returns a 200 OK response if the teacher is added successfully.
+        /// </returns>
         /// <example>
         /// POST api/TeacherData/AddTeacher 
         /// FORM DATA / POST DATA / REQUEST BODY 
@@ -247,6 +252,10 @@ namespace Cumulative1.Controllers
         /// Deletes a teacher from the connected MySQL Database if the ID of that teacher exists. It Also maintains relational integrity.
         /// </summary>
         /// <param name="id">The ID of the teacher.</param>
+        /// <returns>
+        /// A response indicating the success of the operation..
+        /// Returns a 200 OK response if the teacher is updated successfully.
+        /// </returns>
         /// <example>POST /api/TeacherData/DeleteTeacher/3</example>
         [HttpPost]
         [EnableCors(origins: "*", methods: "*", headers: "*")]
@@ -279,6 +288,28 @@ namespace Cumulative1.Controllers
             return Ok("Teacher Deleted successfully");
         }
 
+        /// <summary>
+        /// Updates the information of a specific teacher in the MySQL Database.
+        /// </summary>
+        /// <param name="id">The ID of the teacher to update.</param>
+        /// <param name="TeacherInfo">An object containing the updated information of the teacher.</param>
+        /// <returns>
+        /// A response indicating the success or failure of the operation.
+        /// Returns a 400 Bad Request response if the provided information is missing or incorrect.
+        /// Returns a 200 OK response if the teacher is updated successfully.
+        /// </returns>
+        /// <example>
+        /// Example curl request: curl -d @testdata.json -H "Content-Type: application/json" http://localhost63364/api/TeacherData/UpdateTeacher/10
+        /// Example of POST request body:
+        /// POST /api/TeacherData/UpdateTeacher/{id}
+        /// {
+        ///     "TeacherFname": "UpdatedFirstName",
+        ///     "TeacherLname": "UpdatedLastName",
+        ///     "EmployeeNumber": "UpdatedEmployeeNumber",
+        ///     "HireDate": "2024-04-15",
+        ///     "Salary": 100
+        /// }
+        /// </example>
         [HttpPost]
         [EnableCors(origins: "*", methods: "*", headers: "*")]
         [Route("api/TeacherData/UpdateTeacher/{id}")]
